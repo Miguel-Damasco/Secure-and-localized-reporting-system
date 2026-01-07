@@ -32,3 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 proyect/.vscode/settings.json
+
+### Enviroment ###
+.env
