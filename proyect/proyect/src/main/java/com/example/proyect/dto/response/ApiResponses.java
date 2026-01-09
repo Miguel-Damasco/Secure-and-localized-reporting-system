@@ -12,9 +12,9 @@ public final class ApiResponses {
                                                     pPath));
     }
 
-    public static <T> ApiResponse<Void> error(String pDetails, int pStatusCode, String pMessage, String pPath) {
+    public static <T> ApiResponse<Void> error(String pDetails, String pCode, int pStatusCode, String pMessage, String pPath) {
 
-        ErrorInfo errorInfo = new ErrorInfo(pDetails);
+        ErrorInfo errorInfo = new ErrorInfo(pDetails, pCode);
 
         return new ApiResponse.Error(errorInfo, Meta.of(false, 
                                                             pStatusCode, 

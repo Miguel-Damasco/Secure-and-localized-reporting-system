@@ -20,7 +20,7 @@ import com.example.proyect.service.AuthenticationService;
 import com.example.proyect.service.UserService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping(path = "/user")
 public class LogInController {
     
     private final UserService userService;
@@ -45,7 +45,7 @@ public class LogInController {
                                             .toUri();
 
         return ResponseEntity.created(location)
-                                                .body(ApiResponses.success(response, 
+                                        .body(ApiResponses.success(response, 
                                                     201, 
                                                     "User successfully register!", 
                                                     location.getPath()));
