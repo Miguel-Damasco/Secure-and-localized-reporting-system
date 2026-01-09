@@ -1,55 +1,69 @@
 package com.example.proyect.controller;
 
+import java.net.URI;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.example.proyect.dto.RegisterUserDTO;
-import com.example.proyect.model.UserModel;
-import com.example.proyect.service.JWTService;
+import com.example.proyect.dto.response.ApiResponse;
+import com.example.proyect.dto.response.ApiResponses;
+import com.example.proyect.dto.user.LoginUserRequestDTO;
+import com.example.proyect.dto.user.LoginUserResponseDTO;
+import com.example.proyect.dto.user.RegisterUserRequestDTO;
+import com.example.proyect.dto.user.RegisterUserResponseDTO;
+import com.example.proyect.service.AuthenticationService;
 import com.example.proyect.service.UserService;
 
 @RestController
+@RequestMapping("/user")
 public class LogInController {
     
     private final UserService userService;
 
-    private final JWTService jwtService;
+    private final AuthenticationService authenticationService;
 
-    private final AuthenticationManager authenticationManager;
-
-    public LogInController(UserService pUserService, JWTService pJwtService, AuthenticationManager pAuthenticationManager) {
+    public LogInController(UserService pUserService, AuthenticationService pAuthenticationService) {
         this.userService = pUserService;
-        this.jwtService = pJwtService;
-        this.authenticationManager = pAuthenticationManager;
+        this.authenticationService = pAuthenticationService;
     }
 
 
     @PostMapping("/register")
-    public UserModel register(@RequestBody RegisterUserDTO pRequest) {
+    public ResponseEntity<ApiResponse<RegisterUserResponseDTO>> register(@RequestBody RegisterUserRequestDTO pRequest) {
 
-        return this.userService.registerUser(pRequest);
+        RegisterUserResponseDTO response = this.userService.registerUser(pRequest);
+
+        URI location = ServletUriComponentsBuilder
+                                            .fromCurrentRequest()
+                                            .path("/{id}")
+                                            .buildAndExpand(response.id())
+                                            .toUri();
+
+        return ResponseEntity.created(location)
+                                                .body(ApiResponses.success(response, 
+                                                    201, 
+                                                    "User successfully register!", 
+                                                    location.getPath()));
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody RegisterUserDTO request) {
+    public ResponseEntity<ApiResponse<LoginUserResponseDTO>> login(@RequestBody LoginUserRequestDTO request) {
 
-        Authentication auth = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                request.username(),
-                request.password()
-            )
-        );
+        LoginUserResponseDTO response = this.authenticationService.login(request);
 
-        String jwt = jwtService.generateToken(auth.getName());
+        String path = ServletUriComponentsBuilder
+                                                .fromCurrentRequest()
+                                                .build()
+                                                .getPath();
 
-        return ResponseEntity.ok(jwt);
+        return ResponseEntity.ok(ApiResponses.success(response, 
+                                    200, "Log in successfully!", path));
     }
 
     @GetMapping("/test")

@@ -3,44 +3,21 @@ package com.example.proyect.service;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.proyect.dto.user.LoginUserRequestDTO;
 import com.example.proyect.dto.user.LoginUserResponseDTO;
-import com.example.proyect.dto.user.RegisterUserRequestDTO;
-import com.example.proyect.dto.user.RegisterUserResponseDTO;
-import com.example.proyect.model.UserModel;
-import com.example.proyect.repository.UserRepository;
 
 @Service
-public class UserService {
+public class AuthenticationService {
     
     private final JWTService jwtService;
 
-    private final UserRepository userRepository;
-
     private final AuthenticationManager authenticationManager;
 
-    private final PasswordEncoder encoder;
-
-    public UserService(JWTService pJwtService, AuthenticationManager pAuthenticationManager , UserRepository pUserRepository, PasswordEncoder pPasswordEncoder) {
+    public AuthenticationService(JWTService pJwtService, AuthenticationManager pAuthenticationManager) {
         this.jwtService = pJwtService;
-        this.userRepository = pUserRepository;
         this.authenticationManager = pAuthenticationManager;
-        this.encoder = pPasswordEncoder;
-    }
-
-    public RegisterUserResponseDTO registerUser(RegisterUserRequestDTO pRequest) {
-
-        UserModel myNewUser = new UserModel();
-        myNewUser.setUsername(pRequest.username());
-        myNewUser.setPassword(encoder.encode(pRequest.password()));
-
-        UserModel myUser = userRepository.save(myNewUser);
-
-        return new RegisterUserResponseDTO(myUser.getId(), myUser.getUsername());
-
     }
 
     public LoginUserResponseDTO login(LoginUserRequestDTO pRequest) {
@@ -53,6 +30,5 @@ public class UserService {
         String token = this.jwtService.generateToken(authentication.getName());
 
         return new LoginUserResponseDTO(token);
-
     }
 }

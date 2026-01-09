@@ -25,6 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         if(myUser == null) {
 
+            // Going to be change to a log system.
             System.out.println("My user not found");
             throw new UsernameNotFoundException("User not found");
         }
