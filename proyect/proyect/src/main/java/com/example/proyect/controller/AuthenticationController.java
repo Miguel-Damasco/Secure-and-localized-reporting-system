@@ -21,13 +21,13 @@ import com.example.proyect.service.UserService;
 
 @RestController
 @RequestMapping(path = "/user")
-public class LogInController {
+public class AuthenticationController {
     
     private final UserService userService;
 
     private final AuthenticationService authenticationService;
 
-    public LogInController(UserService pUserService, AuthenticationService pAuthenticationService) {
+    public AuthenticationController(UserService pUserService, AuthenticationService pAuthenticationService) {
         this.userService = pUserService;
         this.authenticationService = pAuthenticationService;
     }
@@ -65,12 +65,5 @@ public class LogInController {
         return ResponseEntity.ok(ApiResponses.success(response, 
                                     200, "Log in successfully!", path));
     }
-
-    @GetMapping("/test")
-    public String test() {
-
-        return "Hola!";
-    }
-
 
 }
