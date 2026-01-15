@@ -11,6 +11,7 @@ import com.example.proyect.dto.response.ApiResponse;
 import com.example.proyect.dto.response.ApiResponses;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import com.example.proyect.exception.domain.UserAlreadyExistsException;
+import com.example.proyect.exception.domain.UserNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -31,6 +32,20 @@ public class GlobalExceptionHandler {
                                                                 HttpStatus.CONFLICT.value(),
                                                                 "Request failed", 
                                                                 path));
+
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUserNotFound(UserNotFoundException exception,
+                                                                                HttpServletRequest request) {
+
+        String path = request.getRequestURI();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponses.error(exception.getMessage(), 
+                                                                                    "USER_NOT_FOUND", 
+                                                                                    HttpStatus.NOT_FOUND.value(),
+                                                                                    "Request failed", 
+                                                                                    path));                               
 
     }
 
